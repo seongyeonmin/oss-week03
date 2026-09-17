@@ -84,8 +84,10 @@ try {
   // TODO: `Now at ${name}: ${temp.toFixed(1)}${unit}, ${describe(code)}`
   const { temp, unit, code } = fc.now;
   console.log(`Now at ${places[0].name}: ${temp.toFixed(1)}${unit}, ${describe(code)}`);
-  
+
 } catch (err) {
   console.error("Error:", err.message);
   process.exit(1);
 }
+
+//
