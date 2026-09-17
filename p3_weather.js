@@ -46,9 +46,19 @@ export async function geocode(name) {
 // 문서: https://open-meteo.com/en/docs
 export async function fetchForecastRaw({ latitude, longitude }, days = 3) {
   const url = new URL("https://api.open-meteo.com/v1/forecast");
-  // TODO: 위 파라미터를 url.searchParams.set 으로 하나씩 넣는다
+  
+  url.searchParams.set("latitude", latitude);
+  url.searchParams.set("longitude", longitude);
+  url.searchParams.set("current","temperature_2m,weather_code");
+  url.searchParams.set("daily","temperature_2m_max,temperature_2m_min,weather_code");
+  url.searchParams.set("timezone","auto");
+  url.searchParams.set("forecast_days", days);
+
   // TODO: return await getJSON(url)
+  return await getJSON(url);
+
 }
+
 
 // P3 (2/2). 원본 응답에서 main.js 가 찍을 것만 추려 작은 객체로 만든다.
 // 응답(raw)의 생김새:

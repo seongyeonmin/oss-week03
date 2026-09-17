@@ -73,6 +73,16 @@ function callbackVersion() {
 // --- async/await 버전 (여기를 채운다) ---
 // 같은 순서(a → b → c), 같은 출력. 중첩 없이, 루프 하나와 try/catch 하나로.
 async function main() {
+  let totalline = 0;
+
+  try{
+    for(const file of FILES){
+      const text = await fsp.readFile(file,"utf8");
+
+      const s = stats(text);
+      console.log('${file} : ');
+    }
+  }
   // TODO
 }
 
