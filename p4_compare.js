@@ -31,14 +31,6 @@
 //
 // 커밋 메시지: p4: compare cities
 
-import { geocode, forecast } from "./p3_weather.js";
-
-const names = process.argv.slice(2);
-if (names.length === 0) {
-  console.error("usage: node p4_compare.js <place> [place ...]");
-  process.exit(1);
-}
-
 // TODO:
 //   1. names.map(async (name) => { ... })  — 이름마다 geocode → forecast, { city, max } 를 돌려주는 Promise
 //   2. const results = await Promise.allSettled(...)
