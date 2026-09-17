@@ -10,8 +10,7 @@
 //
 // 이 파일에서 할 일 (P3)
 //   fetchForecastRaw() 와 parseForecast() 두 함수를 채운다. 둘을 합치지 말 것.
-//   "API 를 부르는 일"과 "응답을 추리는 일"을 따로 두어야, 나중에(P6) 저장해 둔 응답으로
-//   네트워크 없이 parseForecast() 만 다시 돌릴 수 있다.
+//   "API 를 부르는 일"과 "응답을 추리는 일" 을 따로 두어야, 나중에(P6) 저장해 둔 응답으로 네트워크 없이 parseForecast() 만 다시 돌릴 수 있다.
 //   main.js 의 출력 부분까지 채우면 P3 끝. 기대 출력은 README 맨 위.
 //
 // 힌트
@@ -30,7 +29,7 @@ export async function geocode(name) {
   url.searchParams.set("name", name);
   url.searchParams.set("count", 1);
   const data = await getJSON(url);
-  const hit = data.results?.[0];                        // 못 찾으면 undefined
+  const hit = data.results?.[0];                     // 못 찾으면 undefined
   if (!hit) throw new Error(`Unknown place: ${name}`);
   const { latitude, longitude, country } = hit;
   return { name: hit.name, country, latitude, longitude };
@@ -46,7 +45,7 @@ export async function geocode(name) {
 // 문서: https://open-meteo.com/en/docs
 export async function fetchForecastRaw({ latitude, longitude }, days = 3) {
   const url = new URL("https://api.open-meteo.com/v1/forecast");
-  
+  // TODO: 위 파라미터를 url.searchParams.set 으로 하나씩 넣는다
   url.searchParams.set("latitude", latitude);
   url.searchParams.set("longitude", longitude);
   url.searchParams.set("current","temperature_2m,weather_code");
@@ -58,7 +57,6 @@ export async function fetchForecastRaw({ latitude, longitude }, days = 3) {
   return await getJSON(url);
 
 }
-
 
 // P3 (2/2). 원본 응답에서 main.js 가 찍을 것만 추려 작은 객체로 만든다.
 // 응답(raw)의 생김새:
@@ -72,8 +70,25 @@ export async function fetchForecastRaw({ latitude, longitude }, days = 3) {
 //     now:  { temp: 26.1, unit: "°C", code: 2 },
 //     days: [ { date: "2026-09-17", min: 22.1, max: 28.4, code: 2 }, ... ]
 //   }
+
 export function parseForecast(raw) {
   // TODO
+  const { temperature_2m: temp, weather_code: code } = raw.current;
+  const unit = raw.current_units.temperature_2m;
+
+  console.log(`${temp}${unit}, code ${code}`);
+
+  const now = { temp, unit, code };
+
+  const days = raw.daily.time.map((date, i) => {
+    return {
+      date: date, min: raw.daily.temperature_2m_min[i], max: raw.daily.temperature_2m_max[i], code: raw.daily.weather_code[i]
+    };
+  });
+
+  return { now, days };
+
+
 }
 
 // 두 단계를 묶은 것. P4, P5, P6 가 이 함수를 그대로 가져다 쓴다. 건드릴 필요 없음.
