@@ -44,3 +44,33 @@ if (names.length === 0) {
 //   2. const results = await Promise.allSettled(...)
 //   3. fulfilled / rejected 로 나눔
 //   4. max 내림차순 정렬 → `${i + 1}. ${city.padEnd(8)} ${max.toFixed(1)}` → 실패는 `✗ ${name}: ${message}`
+
+
+import { geocode, forecast } from "./p3_weather.js";
+
+const names = process.argv.slice(2);
+if (names.length === 0) {
+  console.error("usage: node p4_compare.js <place> [place ...]");
+  process.exit(1);
+}
+
+const results = await Promise.allSettled(
+  names.map(async (name) => {
+    const place = await geocode(name);
+    const weather = await forecast(place);
+    return { city: place.name, max: weather.days[0].max };
+  })
+);
+
+results
+  .filter((r) => r.status === "fulfilled")
+  .map((r) => r.value)
+  .sort((a, b) => b.max - a.max)
+  .forEach((s, i) => console.log(`${i + 1}. ${s.city.padEnd(8)} ${s.max.toFixed(1)}`));
+
+results.forEach((r, i) => {
+  if (r.status === "rejected") {
+    console.log(`✗ ${names[i]}: ${r.reason.message}`);
+  }
+});
+
